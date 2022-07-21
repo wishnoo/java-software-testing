@@ -19,31 +19,21 @@ public class PhoneNumberValidatorTest {
 		underTest = new PhoneNumberValidator();
 	}
 	
-	@Test
-	@DisplayName("Should fail when length is bigger than 13")
-	void itShouldValidatePhoneNumberWhenIncorrectAndHasLengthBigggerThan13() {
+	@ParameterizedTest
+	@CsvSource({
+		"+447000000000,true",
+		"+44700000000008,false",
+		"4470000000008,false"
+	})
+	void itShouldValidatePhoneNumber(String phoneNumber, boolean expected) {
 		// Given
-		String phoneNumber = "+44700000000008";
+//		String phoneNumber = "+447000000000";
 		
 		// When
 		boolean isValid = underTest.test(phoneNumber);
 		
 		// Then
-		assertThat(isValid).isFalse();
-		
-	}
-	
-	@Test
-	@DisplayName("Should fail when does not start with +")
-	void itShouldValidatePhoneNumberWhenDoesNotStartWithPlusSign() {
-		// Given
-		String phoneNumber = "4470000000008";
-		
-		// When
-		boolean isValid = underTest.test(phoneNumber);
-		
-		// Then
-		assertThat(isValid).isFalse();
+		assertThat(isValid).isEqualTo(expected);
 		
 	}
 }
