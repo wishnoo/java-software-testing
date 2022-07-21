@@ -3,6 +3,8 @@ package com.amigoscode.testing.customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.amigoscode.testing.utils.PhoneNumberValidator;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -10,14 +12,21 @@ import java.util.UUID;
 public class CustomerRegistrationService {
 
     private final CustomerRepository customerRepository;
+    private final PhoneNumberValidator phoneNumberValidator;
 
     @Autowired
-    public CustomerRegistrationService(CustomerRepository customerRepository) {
+    public CustomerRegistrationService(CustomerRepository customerRepository, PhoneNumberValidator phoneNumberValidator) {
         this.customerRepository = customerRepository;
+        this.phoneNumberValidator = phoneNumberValidator;
     }
 
     public void registerNewCustomer(CustomerRegistrationRequest request) {
         String phoneNumber = request.getCustomer().getPhoneNumber();
+        
+        // Validate phone number
+        if (!phoneNumberValidator.test(phoneNumber)) {
+        	throw new IllegalStateException("Phone Number " + phoneNumber + " is not valid");
+        }
 
         Optional<Customer> customerOptional = customerRepository
                 .selectCustomerByPhoneNumber(phoneNumber);
